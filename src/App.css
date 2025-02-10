@@ -1,0 +1,28 @@
+.app-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.task-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.task-input input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.task-input button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
