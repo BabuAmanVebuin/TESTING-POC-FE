@@ -1,18 +1,19 @@
 import { Task } from "../types/taskTypes";
-
-export const generateId = (tasks: Task[]): number => {
-  return tasks.length ? Math.max(...tasks.map((task) => task.id)) + 1 : 1;
-};
+import { generateId } from "./idUtils";
 
 export const createTask = (
   tasks: Task[],
   title: string,
-  description: string
+  description: string,
+  status: "completed" | "incomplete",
+  priority: "high" | "low"
 ): Task[] => {
   const newTask: Task = {
     id: generateId(tasks),
     title,
     description,
+    status, // Add status
+    priority, // Add priority
     createdDate: new Date().toISOString(),
     updatedDate: new Date().toISOString(),
   };
@@ -23,11 +24,13 @@ export const updateTask = (
   tasks: Task[],
   id: number,
   title: string,
-  description: string
+  description: string,
+  status: "completed" | "incomplete",
+  priority: "high" | "low"
 ): Task[] => {
   return tasks.map((task) =>
     task.id === id
-      ? { ...task, title, description, updatedDate: new Date().toISOString() }
+      ? { ...task, title, description, status, priority, updatedDate: new Date().toISOString() }
       : task
   );
 };

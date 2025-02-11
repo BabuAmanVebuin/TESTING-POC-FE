@@ -1,10 +1,10 @@
 import React, { createContext, useState, ReactNode, useContext } from "react";
-import { TaskType } from "../types/taskTypes";
+import { Task } from "../types/taskTypes";
 
 interface TaskContextType {
-  tasks: TaskType[];
-  addTask: (task: TaskType) => void;
-  updateTask: (task: TaskType) => void;
+  tasks: Task[];
+  addTask: (task: Task) => void;
+  updateTask: (task: Task) => void;
   deleteTask: (id: number) => void;
 }
 
@@ -13,13 +13,13 @@ const TaskContext = createContext<TaskContextType | undefined>(undefined);
 export const TaskProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [tasks, setTasks] = useState<TaskType[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-  const addTask = (task: TaskType) => {
+  const addTask = (task: Task) => {
     setTasks((prevTasks) => [...prevTasks, task]);
   };
 
-  const updateTask = (updatedTask: TaskType) => {
+  const updateTask = (updatedTask: Task) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
     );

@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "generate-test": "tsx generateTests.ts",
     "test": "jest --coverage",
-    "generate-and-test": "yarn generate-test && yarn test"
+    "generate-and-test": "yarn generate-test && yarn test",
+    "cypress:open": "cypress open --config-file cypress.config.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
@@ -27,11 +28,13 @@
     "@testing-library/react": "^16.2.0",
     "@testing-library/react-hooks": "^8.0.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/cypress": "^1.1.6",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.1",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
+    "cypress": "^14.0.2",
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",

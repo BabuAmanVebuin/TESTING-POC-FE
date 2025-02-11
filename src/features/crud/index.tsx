@@ -1,36 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useTaskManagement } from "./hooks/useTaskManagement";
+import { useTaskFilters } from "./hooks/useTaskFilters";
+import { useTaskSearch } from "./hooks/useTaskSearch";
+import { saveTasksToLocalStorage, loadTasksFromLocalStorage } from "./utils/localStorageUtils";
 import TaskList from "./components/TaskList";
-import "../../App.css";
-import { useTasks } from "./hooks/useTaskForm";
 
 const CRUDComponent: React.FC = () => {
-  const { tasks, addTask, editTask, removeTask } = useTasks();
+  const { tasks, addTask, editTask, removeTask } = useTaskManagement();
+  const { statusFilter, setStatusFilter, priorityFilter, setPriorityFilter, filterTasks } = useTaskFilters();
+  const { searchQuery, setSearchQuery, searchTasks } = useTaskSearch();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+  const [status, setStatus] = useState<"completed" | "incomplete">("incomplete");
+  const [priority, setPriority] = useState<"high" | "low">("low");
+
+  useEffect(() => {
+    const savedTasks = loadTasksFromLocalStorage();
+    if (savedTasks.length > 0) {
+      savedTasks.forEach((task) => {
+        addTask(task.title, task.description, task.status, task.priority);
+      });
+    }
+  }, []);
 
   const handleAddOrUpdate = () => {
     if (title && description) {
-      if (editingTaskId !== null) {
-        editTask(editingTaskId, title, description);
-        setEditingTaskId(null); // Reset editing mode
-      } else {
-        addTask(title, description);
-      }
+      addTask(title, description, status, priority);
       setTitle("");
       setDescription("");
+      setStatus("incomplete");
+      setPriority("low");
     }
-  };
+  };   
 
-  const handleEdit = (
-    id: number,
-    taskTitle: string,
-    taskDescription: string
-  ) => {
-    setEditingTaskId(id);
-    setTitle(taskTitle);
-    setDescription(taskDescription);
-  };
+  const filteredTasks = filterTasks(searchTasks(tasks));
+
+  useEffect(() => {
+    if (tasks.length > 0) {
+      saveTasksToLocalStorage(filteredTasks);
+    }
+  }, [filteredTasks, tasks]);
 
   return (
     <div className="app-container">
@@ -40,18 +50,69 @@ const CRUDComponent: React.FC = () => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Title"
+          data-testid="task-title"
         />
         <input
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Description"
+          data-testid="task-description"
         />
-        <button onClick={handleAddOrUpdate}>
-          {editingTaskId !== null ? "Update Task" : "Add Task"}
+        
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value as "completed" | "incomplete")}
+          data-testid="task-status-dropdown"
+        >
+          <option value="incomplete">Incomplete</option>
+          <option value="completed">Completed</option>
+        </select>
+        
+        <select
+          value={priority}
+          onChange={(e) => setPriority(e.target.value as "high" | "low")}
+          data-testid="task-priority"
+        >
+          <option value="low">Low</option>
+          <option value="high">High</option>
+        </select>
+
+        <button
+          onClick={handleAddOrUpdate}
+          data-testid="add-task"
+        >
+          Add Task
         </button>
       </div>
-      <TaskList tasks={tasks} onEdit={handleEdit} onDelete={removeTask} />
+
+      <div className="task-filters">
+        <input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search Tasks"
+          data-testid="search-input"
+        />
+        <select
+          onChange={(e) => setStatusFilter(e.target.value)}
+          data-testid="filter-status"
+        >
+          <option value="">All Status</option>
+          <option value="completed">Completed</option>
+          <option value="incomplete">Incomplete</option>
+        </select>
+        <select
+          onChange={(e) => setPriorityFilter(e.target.value)}
+          data-testid="filter-priority"
+        >
+          <option value="">All Priorities</option>
+          <option value="high">High</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+
+      <TaskList tasks={filteredTasks} onEdit={editTask} onDelete={removeTask} />
     </div>
   );
 };
+
 export default CRUDComponent;

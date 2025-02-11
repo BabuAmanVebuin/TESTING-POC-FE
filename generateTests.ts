@@ -1,4 +1,3 @@
-// Please refer steps in generateTests.md file
 // Step 1 : Step 1: Import Required Modules
 import fs from "fs";
 import path from "path";
@@ -36,7 +35,7 @@ function findFileInSrc(fileName) {
 
   searchRecursively(searchDir);
   return filePath;
-}
+} 
 
 // Step 5: readTypeFile(typeFileName)
 function readTypeFile(typeFileName) {
@@ -62,7 +61,7 @@ async function generateTest(filePath, prompt, typesFile) {
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [{ role: "system", content: fullPrompt }],
-      max_tokens: 1300,
+      max_tokens: 3000,
     });
 
     return response.choices?.[0]?.message?.content?.trim() || "";
